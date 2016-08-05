@@ -1,0 +1,8 @@
+Flask
+pycco
+Flask-Login
+Jinja2
+MarkupSafe
+Werkzeug
+itsdangerous
+requests
