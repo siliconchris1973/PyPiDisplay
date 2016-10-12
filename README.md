@@ -10,7 +10,7 @@ Currently it supports:
 
 **Python 2 vs. Python 3**
 
-The Adafruit library I use to drive the Nokia5110 tiny LCD display is designed to be used with Python2. In case you want to drive a Nokia5110 display with PyPiDisplay an Python3 you need to make sure to adapt the PCD8544 library.
+The Adafruit library I use to drive the Nokia5110 tiny LCD display is designed to be used with Python2. In case you want to drive a Nokia5110 display with PyPiDisplay and Python3 you need to make sure to adapt the PCD8544 library.
  
  In this file at or around line 172 in function 'clear', there is a statement like this:
  
@@ -20,7 +20,7 @@ You will need to change this to read
 
     self._buffer = [0] * int((LCDWIDTH * LCDHEIGHT / 8))
 
-I included a modified PCD8544.py in package ShowStuff to already incorporates this change.
+I included a modified PCD8544.py in package ShowStuff that already incorporates this change.
 
 **Installation**
 
@@ -42,7 +42,7 @@ and start the app
 
     python3 app.py
 
-enjoy - at least the very little stuff there is to enkoy :-)
+enjoy - at least the very little stuff there is to enjoy :-)
 
 Send feedback/issues/bugs to
 

@@ -1,21 +1,31 @@
+#!/usr/bin/env python3
 import sys
+import time
+from os import path
+
 import logging
 from logging.handlers import RotatingFileHandler
+
+from flask import Flask
+from flask import render_template
+from flask import request
+from flask import session
+
+from werkzeug.utils import escape, redirect
 
 # to change the display implementation you only need to change the import here.
 #from ShowStuff import Nokia5110 as Display
 from ShowStuff import DummyDisplay as Display
+from util import RFIDReader as RFIDreader
+from util import simpleLogin as userSession
 
-from flask import Flask
-from flask import render_template
-from flask import session
-import sys
-
+_cwd = path.dirname(path.abspath(__file__))
 app = Flask(__name__, template_folder='templates')
+app.config.from_object(__name__)
 app.secret_key = '1VerySecretKey!'
 
 display = Display.Display()
-
+rfid = RFIDreader.RFIDReader()
 
 @app.route('/')
 def index():
@@ -50,12 +60,14 @@ def validateLogin():
     except Exception as e:
         return render_template('error.html',error = str(e))
 
-    if len(data) > 0:
-        if check_password_hash(str(data[0][3]),_password):
-            session['user'] = data[0][0]
-            return redirect('/status')
-        else:
-            return render_template('error.html',error = 'Wrong Email address or Password.')
+    noSecurity = userSession.userSession()
+
+    #if 'username' in session:
+    if noSecurity.checklogin(_username, _password) == True:
+        #username_session = django.contrib.sessions.backends.signed_cookies
+        #username_session = escape(session['_username']).capitalize()
+        #return redirect('/status', session_user_name=username_session)
+        return render_template('status.html')
     else:
         return render_template('error.html',error = 'Wrong Email address or Password.')
 
@@ -77,8 +89,13 @@ def main():
         print('running all in console mode and with debugging on - please use --server to start a background server')
         appDebug = True
 
-    app.run(host='0.0.0.0', debug=appDebug)
-
+    #app.run(host='0.0.0.0', debug=appDebug)
+    while True:
+        lasttag = ""
+        tag = rfid.run()
+        if tag != lasttag:
+            display.displayText(0, 30, tag)
+        time.sleep(0.5)
 
 if __name__ == '__main__':
     app.run()
